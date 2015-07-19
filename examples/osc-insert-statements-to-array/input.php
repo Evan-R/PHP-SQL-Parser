@@ -1,0 +1,64 @@
+<?php
+
+/*
+ * example typical oscommerce queries
+ */
+
+// define constants & vars, if applicable
+// ----------------------------------------------------------------------------
+define('TABLE_CONFIGURATION', 'configuration');
+
+// define tep_db_query to echo out queries without newline chars
+// ----------------------------------------------------------------------------
+function tep_db_query($sql){
+	echo str_replace(
+		[
+			"\r\n",
+			"\n",
+			"\r",
+		],
+		' ',
+		$sql
+	) . "\n";
+}
+
+// queries to parse into array
+// ----------------------------------------------------------------------------
+
+tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Origin Zip/Postal Code', 'MODULE_SHIPPING_UPSXML_RATES_POSTALCODE', '', 'Enter your origin zip/postalcode.', '6', '11', now())");
+tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Test or Production Mode', 'MODULE_SHIPPING_UPSXML_RATES_MODE', 'Test', 'Use this module in Test or Production mode?', '6', '12', 'tep_cfg_select_option(array(\'Test\', \'Production\'), ', now())");
+// three configuration options were moved to shop Configuration -> Shipping/Packaging in v1.3.0
+// those are (and were renamed to -> ):
+// MODULE_SHIPPING_UPSXML_RATES_UNIT_WEIGHT (LBS/KG) -> SHIPPING_UNIT_WEIGHT
+// MODULE_SHIPPING_UPSXML_RATES_UNIT_LENGTH (IN/CM) -> SHIPPING_UNIT_LENGTH
+// MODULE_SHIPPING_UPSXML_DIMENSIONS_SUPPORT -> SHIPPING_DIMENSIONS_SUPPORT
+tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Quote Type', 'MODULE_SHIPPING_UPSXML_RATES_QUOTE_TYPE', 'Residential', 'Quote for Residential or Commercial Delivery', '6', '15', 'tep_cfg_select_option(array(\'Commercial\', \'Residential\'), ', now())");
+// next three keys added to be able to use negotiated rates (available from UPS since about July 2006)
+tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Negotiated rates', 'MODULE_SHIPPING_UPSXML_RATES_USE_NEGOTIATED_RATES', 'False', 'Do you receive discounted rates from UPS and want to use these for shipping quotes? <strong>Note:</strong>  You need to enter your UPS account number below.', '6', '25', 'tep_cfg_select_option(array(\'True\', \'False\'), ', now())");
+tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Manual Negotiated Rate', 'MODULE_SHIPPING_UPSXML_RATES_MANUAL_NEGOTIATED_RATE', '', 'Enter a negotiated rate manually. <strong>Note:</strong> If \'Negotiated Rates\' above is set to \'True\', This <strong>WILL NOT</strong> be applied. If using this option, set \'Negotiated Rates\' to \'False\'. Usage: \' 57 \' returns 57% of published UPS rate.', '6', '26', now())");
+tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('UPS Account Number', 'MODULE_SHIPPING_UPSXML_RATES_UPS_ACCOUNT_NUMBER', '', 'Enter your UPS Account number when you have and want to use negotiated rates.', '6', '27', now())");
+// added for handling type selection
+tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Handling Type', 'MODULE_SHIPPING_UPSXML_HANDLING_TYPE', 'Flat Fee', 'Handling type for this shipping method.', '6', '14', 'tep_cfg_select_option(array(\'Flat Fee\', \'Percentage\'), ', now())");
+tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Flat Handling Fees Charged', 'MODULE_SHIPPING_UPSXML_HANDLING_CHARGED', 'Per Package', 'Select whether flat fee handling is charged:', '6', '15', 'tep_cfg_select_option(array(\'Per Package\', \'Per Shipment\'), ', now())");
+tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Handling Fee', 'MODULE_SHIPPING_UPSXML_RATES_HANDLING', '0', 'Handling fee for this shipping method.', '6', '16', now())");
+tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('UPS Currency Code', 'MODULE_SHIPPING_UPSXML_CURRENCY_CODE', 'USD', 'Enter the 3 letter currency code for your country of origin. United States (USD)', '6', '2', now())");
+tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable Insurance', 'MODULE_SHIPPING_UPSXML_INSURE', 'True', 'Do you want to insure packages shipped by UPS?', '6', '22', 'tep_cfg_select_option(array(\'True\', \'False\'), ', now())");
+tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) values ('Tax Class', 'MODULE_SHIPPING_UPSXML_RATES_TAX_CLASS', '0', 'Use the following tax class on the shipping fee.', '6', '17', 'tep_get_tax_class_title', 'tep_cfg_pull_down_tax_classes(', now())");
+tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) values ('Shipping Zone', 'MODULE_SHIPPING_UPSXML_RATES_ZONE', '0', 'If a zone is selected, only enable this shipping method for that zone.', '6', '18', 'tep_get_zone_class_title', 'tep_cfg_pull_down_zone_classes(', now())");
+tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Sort order of display.', 'MODULE_SHIPPING_UPSXML_RATES_SORT_ORDER', '0', 'Sort order of display. Lowest is displayed first.', '6', '19', now())");
+// add key for disallowed shipping methods
+tep_db_query("insert into " . TABLE_CONFIGURATION . " ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) values ('Disallowed Shipping Methods', 'MODULE_SHIPPING_UPSXML_TYPES', '', 'Select the UPS services <span style=\'color: red; font-weight: bold\'>not</span> to be offered.', '6', '20', 'get_multioption_upsxml',  'upsxml_cfg_select_multioption_indexed(array(\'US_01\', \'US_02\', \'US_03\', \'US_07\', \'US_54\', \'US_08\', \'CAN_01\', \'US_11\', \'US_12\', \'US_13\', \'US_14\', \'CAN_02\', \'US_59\', \'US_65\', \'CAN_14\', \'MEX_54\', \'EU_82\', \'EU_83\', \'EU_84\', \'EU_85\', \'EU_86\'), ',  now())");
+// add key for shipping delay, changed the constant from SHIPPING_DAYS_DELAY in v1.3.0
+tep_db_query("insert into " . TABLE_CONFIGURATION . " ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) values ('Shipping Delay', 'MODULE_SHIPPING_UPSXML_SHIPPING_DAYS_DELAY', '1', 'How many days from when an order is placed to when you ship it (Decimals are allowed). Arrival date estimations are based on this value.', '6', '21', NULL, now(), NULL, NULL)");
+// add key for enabling email error messages
+tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Email UPS errors', 'MODULE_SHIPPING_UPSXML_EMAIL_ERRORS', 'Yes', 'Do you want to receive UPS errors by email?', '6', '24', 'tep_cfg_select_option(array(\'Yes\', \'No\'), ', now())");
+// add key for time in transit view type
+tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Time in Transit View Type', 'MODULE_SHIPPING_UPSXML_RATES_TIME_IN_TRANSIT_VIEW', 'Not', 'If and how the module should display the time in transit to the customer.', '6', '13', 'tep_cfg_select_option(array(\'Not\',\'Raw\', \'Detailed\'), ', now())");
+tep_db_query("insert into " . TABLE_CONFIGURATION . " ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) values ('Store Processes Orders', 'MODULE_SHIPPING_UPSXML_STORE_DAYS', 'Monday, Tuesday, Wednesday, Thursday, Friday', 'Select the days of the week on which the store processes orders. Used for time in transit delivery date.', '6', '31', NULL,  'upsxml_cfg_select_multioption(array(\'Sunday\', \'Monday\', \'Tuesday\', \'Wednesday\', \'Thursday\', \'Friday\', \'Saturday\'), ',  now())");
+tep_db_query("insert into " . TABLE_CONFIGURATION . " ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) values ('UPS Picks Up', 'MODULE_SHIPPING_UPSXML_UPS_PICKUP_DAYS', 'Monday, Tuesday, Wednesday, Thursday, Friday', 'Select the days of the week on which UPS picks up packages from the store or that the store delivers packages to UPS. Used for time in transit delivery date.', '6', '32', NULL,  'upsxml_cfg_select_multioption(array(\'Monday\', \'Tuesday\', \'Wednesday\', \'Thursday\', \'Friday\'), ',  now())");
+tep_db_query("insert into " . TABLE_CONFIGURATION . " ( configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) values ('UPS Holidays', 'MODULE_SHIPPING_UPSXML_UPS_HOLIDAYS', '2012:1224,1225,1231,0101,0704,1122,1123,0528,0903', 'Format YYYY:MMDD,MMDD...<br />Known UPS holidays (no pick up) are automatically entered each year. Edit as needed to add additional no shipping dates. Used for time in transit delivery date.', '6', '33', NULL, now(), NULL, NULL)");
+tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Display Weight', 'MODULE_SHIPPING_UPSXML_WEIGHT1', 'True', 'Do you want to show number of packages and package weight?', '6', '28', 'tep_cfg_select_option(array(\'True\', \'False\'), ', now())");
+tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Require Signature', 'MODULE_SHIPPING_UPSXML_REQSIG', 'No', 'Do you want to require customers to sign for packages over a certain value?', '6', '29', 'tep_cfg_select_option(array(\'No\', \'Package Value\', \'Shipment Value\'), ', now())");
+tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Signature Threshold', 'MODULE_SHIPPING_UPSXML_SIG_THRESHOLD', '1000', 'Require signature when value exceeds:', '6', '30', now())");
+tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Adult Signature Threshold', 'MODULE_SHIPPING_UPSXML_ADULTSIG_THRESHOLD', '1500', 'Require adult signature when value exceeds (overrides standard signature when values overlap):', '6', '30', now())");
+ 
